@@ -1,6 +1,8 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import News from "../News";
+import List from "../List";
+import Profile from "../Profile";
 import { TabBar } from "antd-mobile";
 import "./index.css";
 
@@ -9,11 +11,16 @@ export default class Home extends React.Component {
     selectedTab: "redTab",
     hidden: false,
   };
-
+  
   render() {
     return (
       <div className="home">
         
+        {/* 子路由 */}
+        <Route path="/home/news" component={News} />
+        <Route path="/home/list" component={List} />
+        <Route path="/home/profile" component={Profile} />
+
         {/* tabBar菜单内容 */}
         <div>
           <TabBar
