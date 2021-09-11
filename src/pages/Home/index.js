@@ -10,11 +10,12 @@ import "./index.css";
 
 export default class Home extends React.Component {
   state = {
-    selectedTab: "redTab",
+    selectedTab: this.props.location.pathname,
     hidden: false,
   };
   
   render() {
+    console.log(this.props.location.pathname)
     return (
       <div className="home">
         
@@ -38,10 +39,10 @@ export default class Home extends React.Component {
               key="home"
               icon={<i className="iconfont icon-ind"></i>}
               selectedIcon={<i className="iconfont icon-ind"></i>}
-              selected={this.state.selectedTab === "blueTab"}
+              selected={this.state.selectedTab === "/home/index"}
               onPress={() => {
                 this.setState({
-                  selectedTab: "blueTab",
+                  selectedTab: "/home/index",
                 });
                 this.props.history.push("/home/index")
               }}
@@ -54,10 +55,10 @@ export default class Home extends React.Component {
               selectedIcon={<i className="iconfont icon-findHouse"></i>}
               title="找房"
               key="Koubei"
-              selected={this.state.selectedTab === "redTab"}
+              selected={this.state.selectedTab === "/home/list"}
               onPress={() => {
                 this.setState({
-                  selectedTab: "redTab",
+                  selectedTab: "/home/list",
                 });
                 this.props.history.push("/home/list")
               }}
@@ -70,10 +71,10 @@ export default class Home extends React.Component {
               selectedIcon={<i className="iconfont icon-infom"></i>}
               title="资讯"
               key="Friend"
-              selected={this.state.selectedTab === "greenTab"}
+              selected={this.state.selectedTab === "/home/news"}
               onPress={() => {
                 this.setState({
-                  selectedTab: "greenTab",
+                  selectedTab: "/home/news",
                 });
                 this.props.history.push("/home/news")
               }}
@@ -85,10 +86,10 @@ export default class Home extends React.Component {
               selectedIcon={<i className="iconfont icon-my"></i>}
               title="我的"
               key="my"
-              selected={this.state.selectedTab === "yellowTab"}
+              selected={this.state.selectedTab === "/home/profile"}
               onPress={() => {
                 this.setState({
-                  selectedTab: "yellowTab",
+                  selectedTab: "/home/profile",
                 });
                 this.props.history.push("/home/profile")
               }}
