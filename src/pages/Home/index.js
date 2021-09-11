@@ -3,6 +3,8 @@ import { Route } from "react-router-dom";
 import News from "../News";
 import List from "../List";
 import Profile from "../Profile";
+import Index from "../Index";
+
 import { TabBar } from "antd-mobile";
 import "./index.css";
 
@@ -17,6 +19,7 @@ export default class Home extends React.Component {
       <div className="home">
         
         {/* 子路由 */}
+        <Route path="/home/index" component={Index} />
         <Route path="/home/news" component={News} />
         <Route path="/home/list" component={List} />
         <Route path="/home/profile" component={Profile} />
