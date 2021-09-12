@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import Home from "./pages/Home";
 import CityList from "./pages/CityList";
 
@@ -7,6 +7,9 @@ function App() {
     <Router>
       <div className="App">
         
+        {/* 默认路由 */}
+        <Route exact path="/" render={() => <Redirect  to="/home" />} />
+
         <Route path="/home" component={Home} />
         <Route path="/citylist" component={CityList} />
       </div>
