@@ -36,7 +36,13 @@ export default class Home extends React.Component {
     selectedTab: this.props.location.pathname,
     hidden: false,
   };
-
+  componentDidUpdate(prevProps) {
+    if (prevProps.location.pathname !== this.props.location.pathname) {
+      this.setState({
+        selectedTab: this.props.location.pathname
+      })
+    }
+  }
   renderTabBarItem() {
     return tabItems.map((item) => (
       <TabBar.Item
