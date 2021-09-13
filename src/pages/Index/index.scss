@@ -1,22 +1,17 @@
 .swiper {
-    height: 212px;
+  height: 212px;
 }
-
-.nav{
-    padding:10px 0;
-}
-
-.nav .am-flexbox-item{
+.nav {
+  padding: 10px 0;
+  .am-flexbox-item {
     text-align: center;
-}
-
-.nav img{
+  }
+  img {
     width: 48px;
-}
-
-.nav h2{
+  }
+  h2 {
     font-size: 13px;
     font-weight: normal;
     margin-top: 7px;
+  }
 }
-
