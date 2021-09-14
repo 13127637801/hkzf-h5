@@ -25,7 +25,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "globals": {
+      "BMapGL": true
+    }
   },
   "browserslist": {
     "production": [
