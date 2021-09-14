@@ -85,6 +85,14 @@ export default class Index extends React.Component {
     this.getWipers();
     this.getGroups();
     this.getNews();
+    const curCity = new window.BMapGL.LocalCity();
+    curCity.get(async res=>{
+      const result = await axios.get(`http://localhost:8080/area/info?name=${res.name}`) 
+      console.log(result.data.body.label)
+      this.setState({
+        curCityName: result.data.body.label
+      });
+    }); 
   }
   renderSwipers() {
     return this.state.swipers.map((item) => (
@@ -160,7 +168,7 @@ export default class Index extends React.Component {
                 className="location"
                 onClick={() => this.props.history.push("/citylist")}
               >
-                <span className="name">上海</span>
+                <span className="name">{this.state.curCityName}</span>
                 <i className="iconfont icon-arrow" />
               </div>
 
