@@ -8,6 +8,8 @@ import 'antd-mobile/dist/antd-mobile.css';
 
 // 导入字体图标库的样式文件
 import './assets/fonts/iconfont.css';
+// 导入react-virtualized样式
+import 'react-virtualized/styles.css';
 
 import './index.css';
 
