@@ -1,5 +1,6 @@
 import React from "react";
 import { Carousel, Flex, Grid, WingBlank } from "antd-mobile";
+import { getCurrentCity } from "../../utils";
 
 // 导入axios
 import axios from "axios";
@@ -81,18 +82,14 @@ export default class Index extends React.Component {
     });
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getWipers();
     this.getGroups();
     this.getNews();
-    const curCity = new window.BMapGL.LocalCity();
-    curCity.get(async res=>{
-      const result = await axios.get(`http://localhost:8080/area/info?name=${res.name}`) 
-      console.log(result.data.body.label)
-      this.setState({
-        curCityName: result.data.body.label
-      });
-    }); 
+    const curCity = await getCurrentCity();
+    this.setState({
+      curCityName: curCity.label,
+    });
   }
   renderSwipers() {
     return this.state.swipers.map((item) => (
