@@ -1,5 +1,5 @@
 import React from "react";
-import { NavBar } from "antd-mobile";
+import { NavBar, Toast } from "antd-mobile";
 import { getCurrentCity } from "../../utils";
 
 import { List, AutoSizer } from "react-virtualized";
@@ -39,20 +39,29 @@ const formatCityIndex = (letter) => {
 };
 
 // 索引（A、B等）的高度
-const TITLE_HEIGHT = 36
+const TITLE_HEIGHT = 36;
 // 每个城市名称的高度
-const NAME_HEIGHT = 50
+const NAME_HEIGHT = 50;
+
+// 有房源的城市
+const HOUSE_CITY = ["北京", "上海", "广州", "深圳"];
 
 export default class CityList extends React.Component {
-  state = {
-    cityList: {},
-    cityIndex: [],
-    // 指定右侧字母索引列表高亮的索引号
-    activeIndex: 0,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      cityList: {},
+      cityIndex: [],
+      // 指定右侧字母索引列表高亮的索引号
+      activeIndex: 0,
+    };
+    // 创建ref对象
+    this.cityListComponent = React.createRef();
+  }
 
-  componentDidMount() {
-    this.getCityList();
+  async componentDidMount() {
+    await this.getCityList();
+    this.cityListComponent.current.measureAllRows();
   }
 
   async getCityList() {
@@ -90,23 +99,59 @@ export default class CityList extends React.Component {
       <div key={key} style={style} className="city">
         <div className="title">{formatCityIndex(letter)}</div>
         {cityList[letter].map((item) => (
-          <div className="name" key={item.value}>
+          <div
+            className="name"
+            key={item.value}
+            onClick={() => this.changeCity(item)}
+          >
             {item.label}
           </div>
         ))}
       </div>
     );
   };
+  // 切换城市
+  changeCity({ label, value }) {
+    console.log(label);
+    if (HOUSE_CITY.indexOf(label) > -1) {
+      localStorage.setItem("hkzf_city", JSON.stringify({ label, value }));
+      this.props.history.go(-1);
+    } else {
+      Toast.info("该城市暂无房源数据", 1, null, false);
+    }
+  }
 
   // 创建动态计算每一行高度的方法
   getRowHeight = ({ index }) => {
-    
     const { cityIndex, cityList } = this.state;
     const citySum = cityList[cityIndex[index]];
-    
     return TITLE_HEIGHT + NAME_HEIGHT * citySum.length;
   };
 
+  renderCityIndex() {
+    const { cityIndex, activeIndex } = this.state;
+    return cityIndex.map((item, index) => (
+      <li
+        className="city-index-item"
+        key={item}
+        onClick={() => {
+          this.cityListComponent.current.scrollToRow(index);
+        }}
+      >
+        <span className={activeIndex === index ? "index-active" : ""}>
+          {item === "hot" ? "热" : item.toUpperCase()}
+        </span>
+      </li>
+    ));
+  }
+  // 用于获取List组件中渲染行的信息
+  onRowsRendered = ({ startIndex }) => {
+    if (this.state.activeIndex !== startIndex) {
+      this.setState({
+        activeIndex: startIndex,
+      });
+    }
+  };
   render() {
     return (
       <div className="citylist">
@@ -122,14 +167,19 @@ export default class CityList extends React.Component {
         <AutoSizer>
           {({ width, height }) => (
             <List
+              ref={this.cityListComponent}
               width={width}
               height={height}
               rowCount={this.state.cityIndex.length}
               rowHeight={this.getRowHeight}
               rowRenderer={this.rowRenderer}
+              onRowsRendered={this.onRowsRendered}
+              scrollToAlignment="start"
             />
           )}
         </AutoSizer>
+
+        <ul className="city-index">{this.renderCityIndex()}</ul>
       </div>
     );
   }
