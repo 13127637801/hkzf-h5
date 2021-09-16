@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from './App';
+
 
 // 导入样式
 import 'antd-mobile/dist/antd-mobile.css';
@@ -12,6 +12,8 @@ import './assets/fonts/iconfont.css';
 import 'react-virtualized/styles.css';
 
 import './index.css';
+
+import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
