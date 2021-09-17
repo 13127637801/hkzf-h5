@@ -7,13 +7,13 @@ import { withRouter } from "react-router";
 import PropTypes from "prop-types";
 
 // 导入样式
-import "./index.scss";
+import styles from "./index.module.css";
 
 function NavHeader(props) {
   const defaultHandler = () => props.history.go("-1");
   return (
     <NavBar
-      className="navbar"
+      className={styles.navBar}
       mode="light"
       icon={<i className="iconfont icon-back" />}
       onLeftClick={props.onLeftClick || defaultHandler}

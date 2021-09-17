@@ -1,6 +1,6 @@
 import React from "react";
-import "./index.scss";
-
+// import "./index.scss";
+import styles from "./index.module.css"
 // 导入封装好的 NavHeader 组件
 import NavHeader from "../../components/NavHeader";
 
@@ -16,9 +16,9 @@ export default class Map extends React.Component {
   }
   render() {
     return (
-      <div className="map">
+      <div className={styles.map}>
         <NavHeader>地图找房</NavHeader>
-        <div id="container"></div>
+        <div id="container" className={styles.container}></div>
       </div>
     );
   }
