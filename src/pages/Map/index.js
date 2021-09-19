@@ -6,7 +6,7 @@ import NavHeader from "../../components/NavHeader";
 
 export default class Map extends React.Component {
   componentDidMount() {
-    this.initMap()
+    this.initMap();
   }
   initMap() {
     // 初始化地图实例
