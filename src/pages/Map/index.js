@@ -25,6 +25,7 @@ export default class Map extends React.Component {
     // 初始化地图实例
     // 注意：在 react 脚手架中全局对象需要使用 window 来访问，否则，会造成 ESLint 校验错误
     const map = new BMapGL.Map("container");
+    this.map = map;
     // 设置中心点坐标
     const point = new BMapGL.Point(116.404, 39.915);
 
@@ -45,6 +46,9 @@ export default class Map extends React.Component {
           // );
           map.addControl(new BMapGL.ZoomControl());
           map.addControl(new BMapGL.ScaleControl());
+
+          // 调用 renderOverlays 方法
+          this.renderOverlays(value);
 
           const res = await axios.get("http://localhost:8080/area/map", {
             params: {
@@ -81,7 +85,6 @@ export default class Map extends React.Component {
             // 设置样式
             label.setStyle(labelStyle);
             label.addEventListener("click", () => {
-             
               map.centerAndZoom(areaPoint, 13);
 
               setTimeout(() => {
@@ -97,6 +100,47 @@ export default class Map extends React.Component {
       },
       label
     );
+  }
+  async renderOverlays(id) {
+    const res = await axios.get("http://localhost:8080/area/map", {
+      params: {
+        id: id,
+      },
+    });
+    
+    const data = res.data.body;
+    const { nextZoom, type } = this.getTypeAndZoom()
+
+    data.forEach(item => {
+      // 创建覆盖物
+      this.createOverlays(item, nextZoom, type)
+    })
+  }
+  // 计算要绘制的覆盖物类型和下一个缩放级别
+  // 区   -> 11 ，范围：>=10 <12
+  // 镇   -> 13 ，范围：>=12 <14
+  // 小区 -> 15 ，范围：>=14 <16
+  getTypeAndZoom() {
+    // 调用地图的 getZoom() 方法，来获取当前缩放级别
+    const zoom = this.map.getZoom()
+    let nextZoom, type
+    if(zoom>=10&&zoom<12) {
+      nextZoom = 13
+      type = 'circle'
+    }else if(zoom>=12&&zoom<14) {
+      nextZoom = 15
+      type = 'circle'
+    }else if(zoom>=14&&zoom<16) {
+      type = 'rect'
+    }
+    return {
+      nextZoom,
+      type
+    }
+  }
+
+  createOverlays(data, zoom, type) {
+    
   }
   render() {
     return (
