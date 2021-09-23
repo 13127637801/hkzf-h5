@@ -6,7 +6,8 @@ import styles from "./index.module.css";
 // 导入封装好的 NavHeader 组件
 import NavHeader from "../../components/NavHeader";
 // 导入axios
-import axios from "axios";
+// import axios from "axios";
+import { API } from "../../utils/api"
 
 // 覆盖物样式
 const labelStyle = {
@@ -56,7 +57,7 @@ export default class Map extends React.Component {
           // 调用 renderOverlays 方法
           this.renderOverlays(value);
 
-          // const res = await axios.get("http://localhost:8080/area/map", {
+          // const res = await API.get("/area/map", {
           //   params: {
           //     id: value,
           //   },
@@ -119,7 +120,7 @@ export default class Map extends React.Component {
   async renderOverlays(id) {
     try {
       Toast.loading("加载中", 0, null, false);
-      const res = await axios.get("http://localhost:8080/area/map", {
+      const res = await API.get("/area/map", {
         params: {
           id: id,
         },
@@ -232,7 +233,7 @@ export default class Map extends React.Component {
   async getHousesList(id) {
     try {
       Toast.loading("加载中", 0, null, false);
-      const res = await axios.get(`http://localhost:8080/houses?cityId=${id}`);
+      const res = await API.get(`/houses?cityId=${id}`);
       Toast.hide();
       this.setState({
         housesList: res.data.body.list,
