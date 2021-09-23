@@ -7,9 +7,8 @@ function App() {
   return (
     <Router>
       <div className="App">
-        
         {/* 默认路由 */}
-        <Route exact path="/" render={() => <Redirect  to="/home" />} />
+        <Route exact path="/" render={() => <Redirect to="/home" />} />
 
         <Route path="/home" component={Home} />
         <Route path="/citylist" component={CityList} />
