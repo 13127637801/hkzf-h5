@@ -1,7 +1,7 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import News from "../News";
-import List from "../List";
+import HouseList from "../HouseList";
 import Profile from "../Profile";
 import Index from "../Index";
 
@@ -69,7 +69,7 @@ export default class Home extends React.Component {
         {/* 子路由 */}
         <Route exact path="/home" component={Index} />
         <Route path="/home/news" component={News} />
-        <Route path="/home/list" component={List} />
+        <Route path="/home/list" component={HouseList} />
         <Route path="/home/profile" component={Profile} />
 
         {/* tabBar菜单内容 */}
