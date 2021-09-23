@@ -115,7 +115,6 @@ export default class CityList extends React.Component {
   };
   // 切换城市
   changeCity({ label, value }) {
-    console.log(label);
     if (HOUSE_CITY.indexOf(label) > -1) {
       localStorage.setItem("hkzf_city", JSON.stringify({ label, value }));
       this.props.history.go(-1);
