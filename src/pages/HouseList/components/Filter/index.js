@@ -5,7 +5,7 @@ import FilterPicker from "../FilterPicker";
 import FilterMore from "../FilterMore";
 
 import styles from "./index.module.css";
-import { types } from "node-sass";
+
 // 标题高亮状态
 // true 表示高亮； false 表示不高亮
 const titleSelectedStatus = {
