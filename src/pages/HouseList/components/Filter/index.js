@@ -56,7 +56,7 @@ export default class Filter extends Component {
     this.setState({
       openType: "",
       selectedValues: {
-        ...selectedValues,
+        ...this.state.selectedValues,
         [type]: value,
       },
     });
@@ -103,6 +103,7 @@ export default class Filter extends Component {
 
     return (
       <FilterPicker
+        key={openType}
         onCancel={this.onCancel}
         onSave={this.onSave}
         data={data}
