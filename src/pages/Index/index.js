@@ -7,6 +7,9 @@ import SearchHeader from "../../components/SearchHeader";
 // 导入axios
 import axios from "axios";
 
+// 导入样式
+import "./index.scss"
+
 import Nav1 from "../../assets/images/nav-1.png";
 import Nav2 from "../../assets/images/nav-2.png";
 import Nav3 from "../../assets/images/nav-3.png";
