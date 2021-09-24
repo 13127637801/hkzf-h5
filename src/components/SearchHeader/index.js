@@ -10,7 +10,6 @@ import PropTypes from "prop-types";
 import './index.scss'
 
 function SearchHeader(props) {
-  const defaultHandler = () => props.history.go("-1");
   return (
     <Flex className={["search-box",props.className || ""].join(" ")}>
       {/* 左侧白色区域 */}

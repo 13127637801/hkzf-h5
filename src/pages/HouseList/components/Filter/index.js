@@ -21,6 +21,7 @@ export default class Filter extends Component {
   };
   onTitleClick = (type) => {
     this.setState((prevState) => {
+      console.log(prevState)
       return {
         titleSelectedStatus: {
           ...prevState.titleSelectedStatus,
