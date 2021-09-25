@@ -36,14 +36,39 @@ export default class Filter extends Component {
     this.getFiltersData();
   }
   onTitleClick = (type) => {
-    this.setState((prevState) => {
-      return {
-        titleSelectedStatus: {
-          ...prevState.titleSelectedStatus,
-          [type]: true,
-        },
-        openType: type,
-      };
+    const { titleSelectedStatus, selectedValues } = this.state;
+    // 创建新的标题选中状态对象
+    const newTitleSelectedStatus = { ...titleSelectedStatus };
+
+    Object.keys(titleSelectedStatus).forEach((key) => {
+      if (key === type) {
+        newTitleSelectedStatus[type] = true;
+        return;
+      }
+
+      const selectedVal = selectedValues[key];
+
+      if (
+        key === "area" &&
+        (selectedVal.length !== 2 || selectedVal[0] !== "area")
+      ) {
+        newTitleSelectedStatus[key] = true;
+      } else if (key === "mode" && selectedVal[0] !== "null") {
+        // 高亮
+        newTitleSelectedStatus[key] = true;
+      } else if (key === "price" && selectedVal[0] !== "null") {
+        // 高亮
+        newTitleSelectedStatus[key] = true;
+      } else if (key === "more") {
+        // 更多选择项 FilterMore 组件
+      } else {
+        newTitleSelectedStatus[key] = false;
+      }
+    });
+
+    this.setState({
+      openType: type,
+      titleSelectedStatus: newTitleSelectedStatus,
     });
   };
   onCancel = () => {
@@ -69,7 +94,6 @@ export default class Filter extends Component {
     this.setState({
       filtersData: res.data.body,
     });
-    console.log(this.state.filtersData);
   }
   renderFilterPicker() {
     const {
@@ -113,6 +137,17 @@ export default class Filter extends Component {
       />
     );
   }
+  renderFilterMore() {
+    const {
+      openType,
+      filtersData: { roomType, oriented, floor, characteristic },
+    } = this.state;
+    if (openType !== "more") {
+      return;
+    }
+    const data = { roomType, oriented, floor, characteristic };
+    return <FilterMore data={data} />;
+  }
   render() {
     const { titleSelectedStatus, openType } = this.state;
     return (
@@ -132,7 +167,7 @@ export default class Filter extends Component {
           {this.renderFilterPicker()}
 
           {/* 最后一个菜单对应的内容： */}
-          {/* <FilterMore /> */}
+          {this.renderFilterMore()}
         </div>
       </div>
     );
