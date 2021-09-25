@@ -78,7 +78,6 @@ export default class Filter extends Component {
     });
   };
   onSave = (type, value) => {
-    console.log(type, value);
     this.setState({
       openType: "",
       selectedValues: {
