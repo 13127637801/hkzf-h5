@@ -11,27 +11,27 @@ export default class FilterMore extends Component {
 
   onTagClick = (value) => {
     const { selectedValues } = this.state;
-    const newSelectedValues = [...selectedValues]
-    if(selectedValues.indexOf(value) <= -1) {
-      newSelectedValues.push(value)
-    }else {
-      const index = newSelectedValues.findIndex(item => item === value)
-      newSelectedValues.splice(index, 1)
+    const newSelectedValues = [...selectedValues];
+    if (selectedValues.indexOf(value) <= -1) {
+      newSelectedValues.push(value);
+    } else {
+      const index = newSelectedValues.findIndex((item) => item === value);
+      newSelectedValues.splice(index, 1);
     }
     this.setState({
-      selectedValues: newSelectedValues
-    })
+      selectedValues: newSelectedValues,
+    });
   };
   // 渲染标签
   renderFilters(data) {
     // 高亮类名： styles.tagActive
     const { selectedValues } = this.state;
     return data.map((item) => {
-      const isSelected = selectedValues.indexOf(item.value) > -1
+      const isSelected = selectedValues.indexOf(item.value) > -1;
       return (
         <span
           key={item.value}
-          className={[styles.tag, isSelected ? styles.tagActive : ''].join(" ")}
+          className={[styles.tag, isSelected ? styles.tagActive : ""].join(" ")}
           onClick={() => this.onTagClick(item.value)}
         >
           {item.label}
@@ -81,7 +81,12 @@ export default class FilterMore extends Component {
         </div>
 
         {/* 底部按钮 */}
-        <FilterFooter className={styles.footer} />
+        <FilterFooter
+          className={styles.footer}
+          cancelText="清除"
+          onCancel={this.onCancel}
+          onOk={this.onOk}
+        />
       </div>
     );
   }

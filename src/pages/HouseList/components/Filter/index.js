@@ -59,8 +59,9 @@ export default class Filter extends Component {
       } else if (key === "price" && selectedVal[0] !== "null") {
         // 高亮
         newTitleSelectedStatus[key] = true;
-      } else if (key === "more") {
+      } else if (key === "more" && selectedVal.length !== 0) {
         // 更多选择项 FilterMore 组件
+        newTitleSelectedStatus[key] = true;
       } else {
         newTitleSelectedStatus[key] = false;
       }
@@ -140,13 +141,24 @@ export default class Filter extends Component {
   renderFilterMore() {
     const {
       openType,
+      selectedValues,
       filtersData: { roomType, oriented, floor, characteristic },
     } = this.state;
     if (openType !== "more") {
       return;
     }
     const data = { roomType, oriented, floor, characteristic };
-    return <FilterMore data={data} />;
+    const defaultValue = selectedValues.more;
+
+    return (
+      <FilterMore
+        data={data}
+        type={openType}
+        onSave={this.onSave}
+        onCancel={this.onCancel}
+        defaultValue={defaultValue}
+      />
+    );
   }
   render() {
     const { titleSelectedStatus, openType } = this.state;
