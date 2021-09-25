@@ -72,18 +72,66 @@ export default class Filter extends Component {
       titleSelectedStatus: newTitleSelectedStatus,
     });
   };
-  onCancel = () => {
+  onCancel = (type) => {
+
+    const { titleSelectedStatus, selectedValues } = this.state;
+    // 创建新的标题选中状态对象
+    const newTitleSelectedStatus = { ...titleSelectedStatus };
+    const selectedVal = selectedValues[type];
+    if (
+      type === "area" &&
+      (selectedVal.length !== 2 || selectedVal[0] !== "area")
+    ) {
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "mode" && selectedVal[0] !== "null") {
+      // 高亮
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "price" && selectedVal[0] !== "null") {
+      // 高亮
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "more" && selectedVal.length !== 0) {
+      // 更多选择项 FilterMore 组件
+      newTitleSelectedStatus[type] = true;
+    } else {
+      newTitleSelectedStatus[type] = false;
+    }
+
     this.setState({
       openType: "",
+      titleSelectedStatus: newTitleSelectedStatus,
     });
   };
   onSave = (type, value) => {
+    const { titleSelectedStatus } = this.state;
+    // 创建新的标题选中状态对象
+    const newTitleSelectedStatus = { ...titleSelectedStatus };
+    const selectedVal = value;
+    
+    if (
+      type === "area" &&
+      (selectedVal.length !== 2 || selectedVal[0] !== "area")
+    ) {
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "mode" && selectedVal[0] !== "null") {
+      // 高亮
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "price" && selectedVal[0] !== "null") {
+      // 高亮
+      newTitleSelectedStatus[type] = true;
+    } else if (type === "more" && selectedVal.length !== 0) {
+      // 更多选择项 FilterMore 组件
+      newTitleSelectedStatus[type] = true;
+    } else {
+      newTitleSelectedStatus[type] = false;
+    }
+
     this.setState({
       openType: "",
       selectedValues: {
         ...this.state.selectedValues,
         [type]: value,
       },
+      titleSelectedStatus: newTitleSelectedStatus,
     });
   };
   // 封装获取所有筛选条件的方法

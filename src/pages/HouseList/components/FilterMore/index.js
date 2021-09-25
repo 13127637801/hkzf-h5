@@ -62,7 +62,7 @@ export default class FilterMore extends Component {
     return (
       <div className={styles.root}>
         {/* 遮罩层 */}
-        <div className={styles.mask} onClick={onCancel}/>
+        <div className={styles.mask} onClick={()=>onCancel(this.props.type)}/>
         {/* 条件内容 */}
         <div className={styles.tags}>
           <dl className={styles.dl}>
