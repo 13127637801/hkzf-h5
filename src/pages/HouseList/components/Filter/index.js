@@ -73,7 +73,6 @@ export default class Filter extends Component {
     });
   };
   onCancel = (type) => {
-
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -106,7 +105,7 @@ export default class Filter extends Component {
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
     const selectedVal = value;
-    
+
     if (
       type === "area" &&
       (selectedVal.length !== 2 || selectedVal[0] !== "area")
@@ -125,12 +124,35 @@ export default class Filter extends Component {
       newTitleSelectedStatus[type] = false;
     }
 
+    let filters = {};
+
+    const newSelectedValues = {
+      ...this.state.selectedValues,
+      [type]: value,
+    };
+
+    const { area, mode, more, price } = newSelectedValues;
+    const areaKey = area[0];
+    let areaValue = null;
+    if (area.length === 3) {
+      if (area[2] !== "null") {
+        areaValue = area[2];
+      } else {
+        areaValue = area[1];
+      }
+    }
+    filters[areaKey] = areaValue;
+    filters.mode = mode[0];
+    filters.price = price[0];
+    filters.more = more.join(",");
+    console.log(filters)
+    
+    // 调用父组件中的方法，来将筛选数据传递给父组件
+    this.props.onFilter(filters)
+
     this.setState({
       openType: "",
-      selectedValues: {
-        ...this.state.selectedValues,
-        [type]: value,
-      },
+      selectedValues: newSelectedValues,
       titleSelectedStatus: newTitleSelectedStatus,
     });
   };
