@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import styles from "./index.module.css";
 // 导入封装好的 NavHeader 组件
 import NavHeader from "../../components/NavHeader";
+// 导入 HouseItem 组件
+import HouseItem from '../../components/HouseItem'
 // 导入axios
 // import axios from "axios";
 import { API } from "../../utils/api"
+import { BASE_URL } from '../../utils/url'
 
 // 覆盖物样式
 const labelStyle = {
@@ -246,37 +249,16 @@ export default class Map extends React.Component {
   }
   // 渲染房源列表
   renderHousesList() {
-    return this.state.housesList.map((item) => (
-      <div className={styles.house} key={item.houseCode}>
-        <div className={styles.imgWrap}>
-          <img
-            className={styles.img}
-            src={`http://localhost:8080${item.houseImg}`}
-            alt=""
-          />
-        </div>
-        <div className={styles.content}>
-          <h3 className={styles.title}>{item.title}</h3>
-          <div className={styles.desc}>{item.desc}</div>
-          <div>
-            {item.tags.map((tag, index) => {
-              const classTag = tag + (index + 1);
-              return (
-                <span
-                  className={[styles.tag, styles[classTag]].join(" ")}
-                  key={tag}
-                >
-                  {tag}
-                </span>
-              );
-            })}
-          </div>
-          <div className={styles.price}>
-            <span className={styles.priceNum}>{item.price}</span> 元/月
-          </div>
-        </div>
-      </div>
-    ));
+    return this.state.housesList.map(item => (
+      <HouseItem
+        key={item.houseCode}
+        src={BASE_URL + item.houseImg}
+        title={item.title}
+        desc={item.desc}
+        tags={item.tags}
+        price={item.price}
+      />
+    ))
   }
   render() {
     return (
