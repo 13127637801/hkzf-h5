@@ -33,9 +33,12 @@ export default class Filter extends Component {
     selectedValues,
   };
   componentDidMount() {
+    this.htmlBody = document.body;
     this.getFiltersData();
   }
   onTitleClick = (type) => {
+    // 给 body 添加样式
+    this.htmlBody.className = 'body-fixed'
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -73,6 +76,7 @@ export default class Filter extends Component {
     });
   };
   onCancel = (type) => {
+    this.htmlBody.className = ''
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -101,6 +105,7 @@ export default class Filter extends Component {
     });
   };
   onSave = (type, value) => {
+    this.htmlBody.className = ''
     const { titleSelectedStatus } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };

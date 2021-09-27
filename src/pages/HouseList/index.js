@@ -3,6 +3,8 @@ import React from "react";
 import { Flex } from "antd-mobile";
 import { API } from "../../utils/api";
 import { BASE_URL } from "../../utils/url";
+import { getCurrentCity } from '../../utils'
+
 import SearchHeader from "../../components/SearchHeader";
 import Filter from "./components/Filter";
 import Sticky from "../../components/Sticky";
@@ -18,7 +20,7 @@ import HouseItem from "../../components/HouseItem";
 import styles from "./index.module.css";
 
 // 获取当前定位城市信息
-const { label, value } = JSON.parse(localStorage.getItem("hkzf_city"));
+// const { label, value } = JSON.parse(localStorage.getItem("hkzf_city"));
 
 export default class HouseList extends React.Component {
   state = {
@@ -28,13 +30,19 @@ export default class HouseList extends React.Component {
     count: 0,
   };
   filters = {};
-  componentDidMount() {
+  // 初始化默认值
+  label = ''
+  value = ''
+ async componentDidMount() {
+    const {label, value } = await getCurrentCity();
+    this.value = value;
+    this.label = label;
     this.searchHouseList();
   }
   async searchHouseList() {
     const res = await API.get("/houses", {
       params: {
-        cityId: value,
+        cityId: this.value,
         ...this.filters,
         start: 1,
         end: 20,
@@ -48,6 +56,7 @@ export default class HouseList extends React.Component {
     });
   }
   onFilter = (filters) => {
+    window.scrollTo(0,0)
     this.filters = filters;
     this.searchHouseList();
   };
@@ -96,7 +105,7 @@ export default class HouseList extends React.Component {
       try {
         const res = await API.get("/houses", {
           params: {
-            cityId: value,
+            cityId: this.value,
             ...this.filters,
             start: startIndex,
             end: stopIndex,
@@ -124,7 +133,7 @@ export default class HouseList extends React.Component {
             onClick={() => this.props.history.go(-1)}
           />
           <SearchHeader
-            cityName={label}
+            cityName={this.label}
             className={styles.searchHeader}
           ></SearchHeader>
         </Flex>
