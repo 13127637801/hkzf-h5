@@ -39,7 +39,7 @@ const recommendHouses = [
 ]
 
 // 百度地图
-const BMap = window.BMap
+const BMap = window.BMapGL
 
 const labelStyle = {
   position: 'absolute',
