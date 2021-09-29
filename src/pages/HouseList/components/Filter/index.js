@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 
+// 导入 Spring 组件
+import { Spring } from "react-spring";
+
 import FilterTitle from "../FilterTitle";
 import FilterPicker from "../FilterPicker";
 import FilterMore from "../FilterMore";
@@ -38,7 +41,7 @@ export default class Filter extends Component {
   }
   onTitleClick = (type) => {
     // 给 body 添加样式
-    this.htmlBody.className = 'body-fixed'
+    this.htmlBody.className = "body-fixed";
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -76,7 +79,7 @@ export default class Filter extends Component {
     });
   };
   onCancel = (type) => {
-    this.htmlBody.className = ''
+    this.htmlBody.className = "";
     const { titleSelectedStatus, selectedValues } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -105,7 +108,7 @@ export default class Filter extends Component {
     });
   };
   onSave = (type, value) => {
-    this.htmlBody.className = ''
+    this.htmlBody.className = "";
     const { titleSelectedStatus } = this.state;
     // 创建新的标题选中状态对象
     const newTitleSelectedStatus = { ...titleSelectedStatus };
@@ -150,10 +153,10 @@ export default class Filter extends Component {
     filters.mode = mode[0];
     filters.price = price[0];
     filters.more = more.join(",");
-    console.log(filters)
-    
+    console.log(filters);
+
     // 调用父组件中的方法，来将筛选数据传递给父组件
-    this.props.onFilter(filters)
+    this.props.onFilter(filters);
 
     this.setState({
       openType: "",
@@ -234,14 +237,41 @@ export default class Filter extends Component {
       />
     );
   }
+
+  renderMask() {
+    const { openType } = this.state;
+    const isHide =
+      openType !== "area" && openType !== "mode" && openType !== "price";
+    if (isHide) {
+      return null;
+    } else {
+      return (
+        <Spring from={{ opacity: 0 }} to={{ opacity: isHide ? 0 : 1 }}>
+          {(props) => {
+            // props => { opacity: 0 } 是从 0 到 1 的中间值
+            console.log(props.opacity);
+            if (props.opacity === 0) {
+              return null
+            }
+  
+            return (
+              <div
+                style={props}
+                className={styles.mask}
+                onClick={() => this.onCancel(openType)}
+              />
+            );
+          }}
+        </Spring>
+      );
+    }
+  }
   render() {
-    const { titleSelectedStatus, openType } = this.state;
+    const { titleSelectedStatus } = this.state;
     return (
       <div className={styles.root}>
         {/* 前三个菜单的遮罩层 */}
-        {openType === "area" || openType === "mode" || openType === "price" ? (
-          <div className={styles.mask} onClick={this.onCancel} />
-        ) : null}
+        {this.renderMask()}
         <div className={styles.content}>
           {/* 标题栏 */}
           <FilterTitle

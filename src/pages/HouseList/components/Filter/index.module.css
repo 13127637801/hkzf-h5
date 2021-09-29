@@ -16,7 +16,7 @@
 
 .content {
   position: absolute;
-  width: 100%;
   z-index: 3;
+  width: 100%;
   background-color: #fff;
 }
