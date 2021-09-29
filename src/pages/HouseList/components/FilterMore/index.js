@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 
 import FilterFooter from "../../../../components/FilterFooter";
+// 导入 Spring 组件
+import { Spring } from "react-spring";
 
 import styles from "./index.module.css";
 
@@ -62,7 +64,17 @@ export default class FilterMore extends Component {
     return (
       <div className={styles.root}>
         {/* 遮罩层 */}
-        <div className={styles.mask} onClick={()=>onCancel(this.props.type)}/>
+        <Spring from={{ opacity: 0 }} to={{ opacity: 1 }}>
+          {(props) => {
+            if (props.opacity === 0) {
+              return null
+            }
+            
+            return (
+              <div className={styles.mask} onClick={()=>onCancel(this.props.type)}/>
+            )
+          }}
+        </Spring>
         {/* 条件内容 */}
         <div className={styles.tags}>
           <dl className={styles.dl}>
