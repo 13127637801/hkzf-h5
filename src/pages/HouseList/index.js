@@ -18,6 +18,7 @@ import {
 import HouseItem from "../../components/HouseItem";
 // 导入样式
 import styles from "./index.module.css";
+import { concatFn } from "@react-spring/core/dist/declarations/src/helpers";
 
 // 获取当前定位城市信息
 // const { label, value } = JSON.parse(localStorage.getItem("hkzf_city"));
@@ -77,6 +78,7 @@ export default class HouseList extends React.Component {
     return (
       <HouseItem
         key={key}
+        onClick={() => {this.props.history.push(`detail/${house.houseCode}`)}}
         style={style}
         src={BASE_URL + house.houseImg}
         title={house.title}

@@ -71,7 +71,7 @@ export default class Home extends React.Component {
         <Route path="/home/news" component={News} />
         <Route path="/home/list" component={HouseList} />
         <Route path="/home/profile" component={Profile} />
-
+        
         {/* tabBar菜单内容 */}
         <div>
           <TabBar
