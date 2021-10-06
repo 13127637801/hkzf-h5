@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 
 import { Link } from "react-router-dom";
-import { Grid, Button } from "antd-mobile";
+import { Grid, Button, Modal } from "antd-mobile";
 
-import { BASE_URL } from "../../utils/url";
+import { BASE_URL, isAuth, getToken, removeToken, API } from "../../utils";
 
 import styles from "./index.module.css";
 
@@ -23,10 +23,79 @@ const menus = [
 
 // 默认头像
 const DEFAULT_AVATAR = BASE_URL + "/img/profile/avatar.png";
+const alert = Modal.alert;
 
 export default class Profile extends Component {
+  state = {
+    isLogin: isAuth(),
+    // 用户信息
+    userInfo: {
+      avatar: "",
+      nickname: "",
+    },
+  };
+  // 注意：不要忘了在进入页面时调用方法 ！
+  componentDidMount() {
+    this.getUserInfo();
+  }
+
+  async getUserInfo() {
+    if (!this.state.isLogin) {
+      // 未登录
+      return;
+    }
+
+    // 发送请求，获取个人资料
+    const res = await API.get("/user", {
+      headers: {
+        authorization: getToken(),
+      },
+    });
+
+    if (res.data.status === 200) {
+      const { avatar, nickname } = res.data.body;
+      this.setState({
+        userInfo: {
+          avatar: BASE_URL + avatar,
+          nickname,
+        },
+      });
+    }
+  }
+  logout = () => {
+    alert("提示", "是否确定退出?", [
+      { text: "取消" },
+      {
+        text: "退出",
+        onPress: async () => {
+          // 调用退出接口
+          await API.post("/user/logout", null, {
+            headers: {
+              authorization: getToken(),
+            },
+          });
+
+          // 移除本地token
+          removeToken();
+
+          // 处理状态
+          this.setState({
+            isLogin: false,
+            userInfo: {
+              avatar: "",
+              nickname: "",
+            },
+          });
+        },
+      },
+    ]);
+  };
   render() {
     const { history } = this.props;
+    const {
+      isLogin,
+      userInfo: { avatar, nickname },
+    } = this.state;
 
     return (
       <div className={styles.root}>
@@ -39,34 +108,39 @@ export default class Profile extends Component {
           />
           <div className={styles.info}>
             <div className={styles.myIcon}>
-              <img className={styles.avatar} src={DEFAULT_AVATAR} alt="icon" />
+              <img
+                className={styles.avatar}
+                src={avatar || DEFAULT_AVATAR}
+                alt="icon"
+              />
             </div>
             <div className={styles.user}>
-              <div className={styles.name}>游客</div>
+              <div className={styles.name}>{nickname || "游客"}</div>
               {/* 登录后展示： */}
-              {/* <>
-                <div className={styles.auth}>
-                  <span onClick={this.logout}>退出</span>
-                </div>
+              {isLogin ? (
+                <>
+                  <div className={styles.auth}>
+                    <span onClick={this.logout}>退出</span>
+                  </div>
+                  <div className={styles.edit}>
+                    编辑个人资料
+                    <span className={styles.arrow}>
+                      <i className="iconfont icon-arrow" />
+                    </span>
+                  </div>
+                </>
+              ) : (
                 <div className={styles.edit}>
-                  编辑个人资料
-                  <span className={styles.arrow}>
-                    <i className="iconfont icon-arrow" />
-                  </span>
+                  <Button
+                    type="primary"
+                    size="small"
+                    inline
+                    onClick={() => history.push("/login")}
+                  >
+                    去登录
+                  </Button>
                 </div>
-              </> */}
-
-              {/* 未登录展示： */}
-              <div className={styles.edit}>
-                <Button
-                  type="primary"
-                  size="small"
-                  inline
-                  onClick={() => history.push("/login")}
-                >
-                  去登录
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </div>
