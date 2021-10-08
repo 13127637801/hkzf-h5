@@ -46,11 +46,7 @@ export default class Profile extends Component {
     }
 
     // 发送请求，获取个人资料
-    const res = await API.get("/user", {
-      headers: {
-        authorization: getToken(),
-      },
-    });
+    const res = await API.get("/user");
 
     if (res.data.status === 200) {
       const { avatar, nickname } = res.data.body;
@@ -60,9 +56,9 @@ export default class Profile extends Component {
           nickname,
         },
       });
-    }else {
+    } else {
       this.setState({
-        isLogin: false
+        isLogin: false,
       });
     }
   }
