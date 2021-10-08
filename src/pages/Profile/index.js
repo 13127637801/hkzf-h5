@@ -60,6 +60,10 @@ export default class Profile extends Component {
           nickname,
         },
       });
+    }else {
+      this.setState({
+        isLogin: false
+      });
     }
   }
   logout = () => {
