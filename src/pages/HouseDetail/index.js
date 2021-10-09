@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 
-import { Carousel, Flex } from "antd-mobile";
+import { Carousel, Flex, Modal, Toast } from "antd-mobile";
 
 import NavHeader from "../../components/NavHeader";
 import HouseItem from "../../components/HouseItem";
 import HousePackage from "../../components/HousePackage";
 
-import { BASE_URL } from "../../utils/url";
-import { API } from "../../utils/api";
+import { isAuth, BASE_URL, API } from "../../utils";
 
 import styles from "./index.module.css";
 
@@ -57,6 +56,8 @@ const labelStyle = {
   userSelect: "none",
 };
 
+const alert = Modal.alert;
+
 export default class HouseDetail extends Component {
   state = {
     // 数据加载中状态
@@ -94,6 +95,8 @@ export default class HouseDetail extends Component {
       // 房屋描述
       description: "",
     },
+    // 表示房源是否收藏
+    isFavorite: false,
   };
 
   componentDidMount() {
@@ -103,19 +106,83 @@ export default class HouseDetail extends Component {
 
     // 获取房屋数据
     this.getHouseDetail();
+    this.checkFavorite();
   }
 
-  /* 
-    展示房屋详情：
+  // 检查房源是否收藏：
+  async checkFavorite() {
+    const isLogin = isAuth();
+
+    if (!isLogin) {
+      // 没有登录
+      return;
+    }
+
+    // 已登录
+    const { id } = this.props.match.params;
+    const res = await API.get(`/user/favorites/${id}`);
+
+    const { status, body } = res.data;
     
-    1 在找房页面中，给每一个房源列表项添加单击事件，在点击时跳转到房屋详情页面。
-    2 在单击事件中，获取到当前房屋 id。
-    3 根据房屋详情的路由地址，调用 history.push() 实现路由跳转。
-    4 封装 getHouseDetail 方法，在 componentDidMount 中调用该方法。
-    5 在方法中，通过路由参数获取到当前房屋 id。
-    6 使用 API 发送请求，获取房屋数据，保存到 state 中。
-    7 使用房屋数据，渲染房屋详情。
-  */
+    if (status === 200) {
+      // 表示请求已经成功，需要更新 isFavorite 的值
+      this.setState({
+        isFavorite: body.isFavorite,
+      });
+    }
+  }
+
+  handleFavorite = async () => {
+    const isLogin = isAuth();
+    const { history, location, match } = this.props;
+    console.log(isLogin)
+    if (!isLogin) {
+      // 未登录
+      return alert("提示", "登录后才能收藏房源，是否去登录?", [
+        { text: "取消" },
+        {
+          text: "去登录",
+          onPress: () => history.push("/login", { from: location }),
+        },
+      ]);
+    }
+
+    // 已登录
+    const { isFavorite } = this.state;
+    const { id } = match.params;
+
+    if (isFavorite) {
+      // 已收藏，应该删除收藏
+      const res = await API.delete(`/user/favorites/${id}`);
+      // console.log(res)
+      this.setState({
+        isFavorite: false,
+      });
+
+      if (res.data.status === 200) {
+        // 提示用户取消收藏
+        Toast.info("已取消收藏", 1, null, false);
+      } else {
+        // token 超时
+        Toast.info("登录超时，请重新登录", 2, null, false);
+      }
+    } else {
+      // 未收藏，应该添加收藏
+      const res = await API.post(`/user/favorites/${id}`);
+      // console.log(res)
+      if (res.data.status === 200) {
+        // 提示用户收藏成功
+        Toast.info("已收藏", 1, null, false);
+        this.setState({
+          isFavorite: true,
+        });
+      } else {
+        // token 超时
+        Toast.info("登录超时，请重新登录", 2, null, false);
+      }
+    }
+  };
+
   async getHouseDetail() {
     const { id } = this.props.match.params;
 
@@ -126,7 +193,7 @@ export default class HouseDetail extends Component {
 
     const res = await API.get(`/houses/${id}`);
 
-    console.log(res.data.body);
+    
 
     this.setState({
       houseInfo: res.data.body,
@@ -199,6 +266,7 @@ export default class HouseDetail extends Component {
   render() {
     const {
       isLoading,
+      isFavorite,
       houseInfo: {
         community,
         title,
@@ -340,13 +408,17 @@ export default class HouseDetail extends Component {
 
         {/* 底部收藏按钮 */}
         <Flex className={styles.fixedBottom}>
-          <Flex.Item>
+          <Flex.Item onClick={this.handleFavorite}>
             <img
-              src={BASE_URL + "/img/unstar.png"}
+              src={
+                BASE_URL + (isFavorite ? "/img/star.png" : "/img/unstar.png")
+              }
               className={styles.favoriteImg}
               alt="收藏"
             />
-            <span className={styles.favorite}>收藏</span>
+            <span className={styles.favorite}>
+              {isFavorite ? "已收藏" : "收藏"}
+            </span>
           </Flex.Item>
           <Flex.Item>在线咨询</Flex.Item>
           <Flex.Item>
