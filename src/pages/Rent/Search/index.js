@@ -28,7 +28,6 @@ export default class Search extends Component {
   // 渲染搜索结果列表
   renderTips = () => {
     const { tipsList } = this.state;
-    console.log(tipsList)
     return tipsList.map((item) => (
       <li
         key={item.community}
