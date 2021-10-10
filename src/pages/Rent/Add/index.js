@@ -7,7 +7,8 @@ import {
   Picker,
   ImagePicker,
   TextareaItem,
-  Modal
+  Modal,
+  Toast
 } from 'antd-mobile'
 
 import { API } from '../../../utils'
@@ -51,19 +52,29 @@ export default class RentAdd extends Component {
   constructor(props) {
     super(props)
 
+    // console.log(props)
+    const { state } = props.location
+    const community = {
+      name: '',
+      id: ''
+    }
+
+    if (state) {
+      // 有小区信息数据，存储到状态中
+      community.name = state.name
+      community.id = state.id
+    }
+
     this.state = {
       // 临时图片地址
       tempSlides: [],
 
       // 小区的名称和id
-      community: {
-        name: '',
-        id: ''
-      },
+      community,
       // 价格
       price: '',
       // 面积
-      size: 0,
+      size: '',
       // 房屋类型
       roomType: '',
       // 楼层
@@ -81,36 +92,6 @@ export default class RentAdd extends Component {
     }
   }
 
-  handleHouseImg = (files, type, index) => {
-    console.log(files, type, index)
-    this.setState({
-      tempSlides: files
-    })
-  }
-
-  addHouse = async () => {
-    const { tempSlides } = this.state
-    let houseImg = ''
-
-    if (tempSlides.length > 0) {
-      // 已经有上传的图片了
-      const form = new FormData()
-      tempSlides.forEach(item => form.append('file', item.file))
-      console.log(form)
-      const res = await API.post('/houses/image', form, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-
-      // console.log(res)
-      houseImg = res.data.body.join('|')
-      console.log(res)
-    }
-
-    
-  }
-
   // 取消编辑，返回上一页
   onCancel = () => {
     alert('提示', '放弃发布房源?', [
@@ -124,6 +105,101 @@ export default class RentAdd extends Component {
     ])
   }
 
+  /* 
+    获取表单数据：
+  */
+  getValue = (name, value) => {
+    this.setState({
+      [name]: value
+    })
+  }
+
+  /* 
+    获取房屋配置数据：
+  */
+  handleSupporting = selected => {
+    // console.log(selected)
+    this.setState({
+      supporting: selected.join('|')
+    })
+  }
+
+  /* 
+    获取房屋图片：
+
+    1 给 ImagePicker 组件添加 onChange 配置项。
+    2 通过 onChange 的参数，获取到上传的图片，并存储到状态 tempSlides 中。
+  */
+  handleHouseImg = (files, type, index) => {
+    console.log(files, type, index)
+    this.setState({
+      tempSlides: files
+    })
+  }
+
+  /* 
+    发布房源：
+
+    1 在 addHouse 方法中，从 state 里面获取到所有房屋数据。
+    2 使用 API 调用发布房源接口，传递所有房屋数据。
+    3 根据接口返回值中的状态码，判断是否发布成功。
+    4 如果状态码是 200，表示发布成功，就提示：发布成功，并跳转到已发布房源页面。
+    5 否则，就提示：服务器偷懒了，请稍后再试~。
+  */
+  addHouse = async () => {
+    const {
+      tempSlides,
+      title,
+      description,
+      oriented,
+      supporting,
+      price,
+      roomType,
+      size,
+      floor,
+      community
+    } = this.state
+    let houseImg = ''
+
+    // 上传房屋图片：
+    if (tempSlides.length > 0) {
+      // 已经有上传的图片了
+      const form = new FormData()
+      tempSlides.forEach(item => form.append('file', item.file))
+
+      const res = await API.post('/houses/image', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      // console.log(res)
+      houseImg = res.data.body.join('|')
+    }
+
+    // 发布房源
+    const res = await API.post('/user/houses', {
+      title,
+      description,
+      oriented,
+      supporting,
+      price,
+      roomType,
+      size,
+      floor,
+      community: community.id,
+      houseImg
+    })
+
+    if (res.data.status === 200) {
+      // 发布成功
+      Toast.info('发布成功', 1, null, false)
+      this.props.history.push('/rent')
+    } else {
+      Toast.info('服务器偷懒了，请稍后再试~', 2, null, false)
+    }
+  }
+
   render() {
     const Item = List.Item
     const { history } = this.props
@@ -135,13 +211,15 @@ export default class RentAdd extends Component {
       oriented,
       description,
       tempSlides,
-      title
+      title,
+      size
     } = this.state
 
     return (
       <div className={styles.root}>
         <NavHeader onLeftClick={this.onCancel}>发布房源</NavHeader>
 
+        {/* 房源信息 */}
         <List
           className={styles.header}
           renderHeader={() => '房源信息'}
@@ -155,28 +233,55 @@ export default class RentAdd extends Component {
           >
             小区名称
           </Item>
-          <InputItem placeholder="请输入租金/月" extra="￥/月" value={price}>
+          {/* 相当于 form 表单的 input 元素 */}
+          <InputItem
+            placeholder="请输入租金/月"
+            extra="￥/月"
+            value={price}
+            onChange={val => this.getValue('price', val)}
+          >
             租&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;金
           </InputItem>
-          <InputItem placeholder="请输入建筑面积" extra="㎡">
+          <InputItem
+            placeholder="请输入建筑面积"
+            extra="㎡"
+            value={size}
+            onChange={val => this.getValue('size', val)}
+          >
             建筑面积
           </InputItem>
-          <Picker data={roomTypeData} value={[roomType]} cols={1}>
+          <Picker
+            data={roomTypeData}
+            value={[roomType]}
+            cols={1}
+            onChange={val => this.getValue('roomType', val[0])}
+          >
             <Item arrow="horizontal">
               户&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型
             </Item>
           </Picker>
 
-          <Picker data={floorData} value={[floor]} cols={1}>
+          <Picker
+            data={floorData}
+            value={[floor]}
+            cols={1}
+            onChange={val => this.getValue('floor', val[0])}
+          >
             <Item arrow="horizontal">所在楼层</Item>
           </Picker>
-          <Picker data={orientedData} value={[oriented]} cols={1}>
+          <Picker
+            data={orientedData}
+            value={[oriented]}
+            cols={1}
+            onChange={val => this.getValue('oriented', val[0])}
+          >
             <Item arrow="horizontal">
               朝&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;向
             </Item>
           </Picker>
         </List>
 
+        {/* 房屋标题 */}
         <List
           className={styles.title}
           renderHeader={() => '房屋标题'}
@@ -185,9 +290,11 @@ export default class RentAdd extends Component {
           <InputItem
             placeholder="请输入标题（例如：整租 小区名 2室 5000元）"
             value={title}
+            onChange={val => this.getValue('title', val)}
           />
         </List>
 
+        {/* 房屋图像 */}
         <List
           className={styles.pics}
           renderHeader={() => '房屋图像'}
@@ -195,20 +302,22 @@ export default class RentAdd extends Component {
         >
           <ImagePicker
             files={tempSlides}
-            multiple={true}
             onChange={this.handleHouseImg}
+            multiple={true}
             className={styles.imgpicker}
           />
         </List>
 
+        {/* 房屋配置 */}
         <List
           className={styles.supporting}
           renderHeader={() => '房屋配置'}
           data-role="rent-list"
         >
-          <HousePackge select />
+          <HousePackge select onSelect={this.handleSupporting} />
         </List>
 
+        {/* 房屋描述 */}
         <List
           className={styles.desc}
           renderHeader={() => '房屋描述'}
@@ -217,8 +326,8 @@ export default class RentAdd extends Component {
           <TextareaItem
             rows={5}
             placeholder="请输入房屋描述信息"
-            autoHeight
             value={description}
+            onChange={val => this.getValue('description', val)}
           />
         </List>
 
