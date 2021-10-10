@@ -9,7 +9,7 @@ const API = axios.create({
 
 // 添加请求拦截器
 API.interceptors.request.use((config) => {
-  console.log(config, config.url)
+  // console.log(config, config.url)
   const { url } = config;
   if (
     url.startsWith("/user") &&

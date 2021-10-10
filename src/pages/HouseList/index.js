@@ -99,7 +99,7 @@ export default class HouseList extends React.Component {
     //   .then(response => {
     //     // Store response data in list...
     //   })
-    console.log(startIndex, stopIndex);
+    // console.log(startIndex, stopIndex);
 
     return new Promise(async (resolve, reject) => {
       // 数据加载完成时，调用 resolve 即可

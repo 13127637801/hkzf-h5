@@ -153,7 +153,7 @@ export default class Filter extends Component {
     filters.mode = mode[0];
     filters.price = price[0];
     filters.more = more.join(",");
-    console.log(filters);
+    // console.log(filters);
 
     // 调用父组件中的方法，来将筛选数据传递给父组件
     this.props.onFilter(filters);
@@ -249,7 +249,7 @@ export default class Filter extends Component {
         <Spring from={{ opacity: 0 }} to={{ opacity: isHide ? 0 : 1 }}>
           {(props) => {
             // props => { opacity: 0 } 是从 0 到 1 的中间值
-            console.log(props.opacity);
+            // console.log(props.opacity);
             if (props.opacity === 0) {
               return null
             }

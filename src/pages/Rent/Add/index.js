@@ -10,6 +10,8 @@ import {
   Modal
 } from 'antd-mobile'
 
+import { API } from '../../../utils'
+
 import NavHeader from '../../../components/NavHeader'
 import HousePackge from '../../../components/HousePackage'
 
@@ -77,6 +79,36 @@ export default class RentAdd extends Component {
       // 房屋描述
       description: ''
     }
+  }
+
+  handleHouseImg = (files, type, index) => {
+    console.log(files, type, index)
+    this.setState({
+      tempSlides: files
+    })
+  }
+
+  addHouse = async () => {
+    const { tempSlides } = this.state
+    let houseImg = ''
+
+    if (tempSlides.length > 0) {
+      // 已经有上传的图片了
+      const form = new FormData()
+      tempSlides.forEach(item => form.append('file', item.file))
+      console.log(form)
+      const res = await API.post('/houses/image', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      // console.log(res)
+      houseImg = res.data.body.join('|')
+      console.log(res)
+    }
+
+    
   }
 
   // 取消编辑，返回上一页
@@ -164,6 +196,7 @@ export default class RentAdd extends Component {
           <ImagePicker
             files={tempSlides}
             multiple={true}
+            onChange={this.handleHouseImg}
             className={styles.imgpicker}
           />
         </List>
